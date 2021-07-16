@@ -1,0 +1,1270 @@
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\u2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE u2.a51 SET(SMALL) DEBUG PRINT(.\Listings\u2.lst) OBJECT(.\Objects\u2.ob
+                      j) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     org 0000h
+0000 757031            2             mov 70h,#'1'
+0003 757132            3     mov 71h,#'2'
+0006 757233            4     mov 72h,#'3'
+0009 757334            5     mov 73h,#'4'
+000C 8046              6     jmp st
+                       7     ;defining functions for lcd
+000E                   8     command:
+000E F5A0              9     mov p2,a
+0010 C290             10     clr p1.0
+0012 C291             11     clr p1.1
+0014 D292             12     setb p1.2
+0016 1140             13     acall delay
+0018 C292             14     clr p1.2
+001A 1140             15     acall delay
+001C 1140             16     acall delay
+001E 22               17     ret 
+                      18     
+001F                  19     write:
+                      20     ;lcall ready
+001F F5A0             21     mov p2,a
+0021 D290             22     setb p1.0
+0023 C291             23     clr p1.1
+0025 D292             24     setb p1.2
+0027 1140             25     acall delay
+0029 C292             26     clr p1.2
+002B 1140             27     acall delay
+002D 1140             28     acall delay
+002F 22               29     ret
+                      30     
+0030                  31     ready:
+0030 D2A7             32     setb p2.7
+0032 C290             33     clr p1.0
+0034 D291             34     setb p1.1
+0036                  35     wait:
+0036 C292             36     clr p1.2
+0038 1140             37     acall delay
+003A D292             38     setb p1.2
+003C 20A7F7           39     jb p2.7,wait
+003F 22               40     ret
+                      41     
+0040                  42     delay:
+0040 781C             43     mov r0,#1ch
+0042                  44     rep:
+0042 D8FE             45     djnz r0,rep
+0044 22               46     ret
+                      47     
+0045                  48     delay_1s:
+0045 7B08             49     mov r3,#08h
+0047                  50     df1s:
+0047 7AFF             51     mov r2,#0ffh
+0049                  52     d1s:
+0049 79FF             53     mov r1,#0ffh
+004B                  54     de1s:
+004B D9FE             55     djnz r1,de1s
+004D DAFA             56     djnz r2,d1s
+004F DBF6             57     djnz r3,df1s
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     2
+
+0051 22               58     ret
+0052                  59     pt2:
+0052 A188             60     jmp mode2
+                      61     ;start of program
+                      62     
+0054                  63     st:
+                      64     
+0054                  65     port_ini:
+0054 75A000           66     mov p2,#00h
+0057 D290             67     setb p1.0
+0059 D291             68     setb p1.1
+005B D292             69     setb p1.2
+005D 1145             70     acall delay_1s
+                      71     
+005F                  72     Lcd_ini:
+005F B195             73     acall lcd
+                      74     
+0061                  75     Display:
+0061 7445             76     mov a,#'E'
+0063 111F             77     acall write
+0065 746E             78     mov a,#'n'
+0067 111F             79     acall write
+0069 7474             80     mov a,#'t'
+006B 111F             81     acall write
+006D 7465             82     mov a,#'e'
+006F 111F             83     acall write
+0071 7472             84     mov a,#'r'
+0073 111F             85     acall write
+0075 7414             86     mov a,#14h
+0077 110E             87     acall command 
+0079 746D             88     mov a,#'m'
+007B 111F             89     acall write
+007D 746F             90     mov a,#'o'
+007F 111F             91     acall write
+                      92     
+                      93     
+                      94     
+0081 7464             95     mov a,#'d'
+0083 111F             96     acall write
+0085 7465             97     mov a,#'e'
+0087 111F             98     acall write
+                      99     
+0089 7414            100     mov a,#14h
+008B 110E            101     acall command
+                     102     
+008D 7431            103     mov a,#'1'
+008F 111F            104     acall write
+0091 746F            105     mov a,#'o'
+0093 111F            106     acall write
+0095 7472            107     mov a,#'r'
+0097 111F            108     acall write
+0099 7432            109     mov a,#'2'
+009B 111F            110     acall write
+                     111     
+                     112     
+009D 758920          113     mov tmod,#20h
+00A0 758DFA          114     mov th1,#-6
+00A3 759850          115     mov scon,#50h
+00A6 D28E            116     setb tr1
+00A8 3098FD          117     jnb ri,$
+00AB E599            118             mov a,sbuf
+00AD C298            119             clr ri
+00AF B431A0          120             cjne a,#'1',pt2
+00B2 3098FD          121     here:jnb ri,here
+00B5 E599            122     mov a,sbuf
+00B7 F550            123     mov 50h,a
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     3
+
+00B9 C298            124     clr ri
+00BB 3098FD          125     jnb ri,$
+00BE E599            126     mov a,sbuf
+00C0 F551            127     mov 51h,a
+00C2 C298            128     clr ri
+00C4 3098FD          129     jnb ri,$
+00C7 E599            130     mov a,sbuf
+00C9 F552            131     mov 52h,a
+00CB C298            132     clr ri
+00CD 3098FD          133     jnb ri,$
+00D0 E599            134     mov a,sbuf
+00D2 F553            135     mov 53h,a
+00D4 C298            136     clr ri
+00D6 3098FD          137     jnb ri,$
+00D9 E599            138     mov a,sbuf
+00DB F554            139     mov 54h,a
+00DD C298            140     clr ri
+00DF 3098FD          141     jnb ri,$
+00E2 E599            142     mov a,sbuf
+00E4 F555            143     mov 55h,a
+00E6 C298            144     clr ri
+00E8 3098FD          145     jnb ri,$
+00EB E599            146     mov a,sbuf
+00ED F556            147     mov 56h,a
+00EF C298            148     clr ri
+00F1 3098FD          149     jnb ri,$
+00F4 E599            150     mov a,sbuf
+00F6 F557            151     mov 57h,a
+00F8 C298            152     clr ri
+00FA 3098FD          153     jnb ri,$
+00FD E599            154     mov a,sbuf
+00FF F558            155     mov 58h,a
+0101 C298            156     clr ri
+0103 3098FD          157     jnb ri,$
+0106 E599            158     mov a,sbuf
+0108 F559            159     mov 59h,a
+010A C298            160     clr ri
+010C 3098FD          161     jnb ri,$
+010F E599            162     mov a,sbuf
+0111 F560            163     mov 60h,a
+0113 C298            164     clr ri
+0115 3098FD          165     jnb ri,$
+0118 E599            166     mov a,sbuf
+011A F561            167     mov 61h,a
+011C C298            168     clr ri
+                     169     
+                     170     
+011E B195            171     acall lcd
+                     172     
+                     173     
+0120 E550            174     mov a,50h
+0122 111F            175     acall write
+0124 E551            176     mov a,51h
+0126 111F            177     acall write
+0128 E552            178     mov a,52h
+012A 111F            179     acall write
+012C E553            180     mov a,53h
+012E 111F            181     acall write
+0130 E554            182     mov a,54h
+0132 111F            183     acall write
+                     184     
+0134 E555            185     mov a,55h
+0136 111F            186     acall write
+0138 E556            187     mov a,56h
+013A 111F            188     acall write
+013C E557            189     mov a,57h
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     4
+
+013E 111F            190     acall write
+0140 E558            191     mov a,58h
+0142 111F            192     acall write
+0144 E559            193     mov a,59h
+0146 111F            194     acall write
+0148 E560            195     mov a,60h
+014A 111F            196     acall write
+014C E561            197     mov a,61h
+014E 111F            198     acall write
+                     199     
+0150 3098FD          200     jnb ri,$
+0153 E599            201             mov a,sbuf
+0155 C298            202             clr ri
+0157 F562            203             mov 62h,a
+                     204     
+                     205             
+                     206             
+                     207             ;reinitializing lcd
+0159 B195            208     acall lcd
+                     209     
+                     210     
+015B E562            211     mov a,62h       
+015D B42302          212     cjne a,#'#',con
+0160 8010            213     jmp intofh
+0162                 214     con:
+                     215     
+0162 111F            216     acall write     
+                     217     
+0164                 218     DELAYfornumdisplay: 
+0164 7D04            219     mov r5,#4d
+                     220     
+0166                 221     a1:
+0166 7EFA            222     MOV R6,#250D
+0168 7FFA            223            MOV R7,#250D
+016A DEFE            224     LOOP1: DJNZ R6,LOOP1
+016C DFFC            225     LOOP2: DJNZ R7,LOOP1
+016E DDF6            226     LOOP3: DJNZ R5,a1
+                     227     
+                     228     
+                     229     
+                     230             ;reinitializing lcd
+0170 B195            231     acall lcd
+                     232     
+0172                 233     intofh:
+0172 E562            234     mov a,62h
+0174 B43102          235     cjne a,#'1',c1
+0177 8011            236             jmp ais1
+0179                 237             c1:
+0179 B43202          238             cjne a,#'2',c2
+017C 4132            239             jmp ais2
+017E                 240             c2:
+017E B43302          241             cjne a,#'3',c3
+0181 6119            242             jmp ais3
+0183                 243             c3:
+0183 B43402          244             cjne a,#'4',c4
+0186 8151            245             jmp ais4
+0188                 246             c4:
+0188 0154            247             jmp st
+                     248     
+                     249     
+                     250     
+                     251     
+                     252     
+018A                 253     ais1:
+                     254     
+018A 3098FD          255     jnb ri,$
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     5
+
+018D E599            256     mov a,sbuf
+018F C298            257     clr ri
+0191 111F            258     acall write
+0193 3098FD          259     jnb ri,$
+0196 E599            260     mov a,sbuf
+0198 C298            261     clr ri
+019A 111F            262     acall write
+019C 3098FD          263     jnb ri,$
+019F E599            264     mov a,sbuf
+01A1 C298            265     clr ri
+01A3 111F            266     acall write
+01A5 3098FD          267     jnb ri,$
+01A8 E599            268     mov a,sbuf
+01AA C298            269     clr ri
+01AC 111F            270     acall write
+                     271     
+01AE 3098FD          272     jnb ri,$
+01B1 E599            273     mov a,sbuf
+01B3 C298            274     clr ri
+01B5 111F            275     acall write
+01B7 3098FD          276     jnb ri,$
+01BA E599            277     mov a,sbuf
+01BC C298            278     clr ri
+01BE 111F            279     acall write
+01C0 3098FD          280     jnb ri,$
+01C3 E599            281     mov a,sbuf
+01C5 C298            282     clr ri
+01C7 111F            283     acall write
+01C9 3098FD          284     jnb ri,$
+01CC E599            285     mov a,sbuf
+01CE C298            286     clr ri
+01D0 111F            287     acall write
+01D2 3098FD          288     jnb ri,$
+01D5 E599            289     mov a,sbuf
+01D7 C298            290     clr ri
+01D9 111F            291     acall write
+01DB 3098FD          292     jnb ri,$
+01DE E599            293     mov a,sbuf
+01E0 C298            294     clr ri
+01E2 111F            295     acall write
+01E4 3098FD          296     jnb ri,$
+01E7 E599            297     mov a,sbuf
+01E9 C298            298     clr ri
+01EB 111F            299     acall write
+01ED 3098FD          300     jnb ri,$
+01F0 E599            301     mov a,sbuf
+01F2 C298            302     clr ri
+01F4 111F            303     acall write
+01F6 3098FD          304     jnb ri,$
+01F9 E599            305     mov a,sbuf
+01FB C298            306     clr ri
+01FD 111F            307     acall write
+01FF 3098FD          308     jnb ri,$
+0202 E599            309     mov a,sbuf
+0204 C298            310     clr ri
+0206 111F            311     acall write
+0208 3098FD          312     jnb ri,$
+020B E599            313     mov a,sbuf
+020D C298            314     clr ri
+020F 111F            315     acall write
+                     316     
+                     317     
+                     318     
+0211 74C0            319     mov a,#0c0h
+0213 110E            320     acall command
+                     321     
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     6
+
+0215 3098FD          322     jnb ri,$
+0218 E599            323     mov a,sbuf
+021A C298            324     clr ri
+021C 111F            325     acall write
+021E 3098FD          326     jnb ri,$
+0221 E599            327     mov a,sbuf
+0223 C298            328     clr ri
+0225 111F            329     acall write
+0227 3098FD          330     jnb ri,$
+022A E599            331     mov a,sbuf
+022C C298            332     clr ri
+022E 111F            333     acall write
+                     334     
+0230 A175            335     jmp cwe
+                     336     
+                     337     
+                     338     ;i am doing.....
+0232                 339     ais2:
+                     340     
+0232 3098FD          341     jnb ri,$
+0235 E599            342     mov a,sbuf
+0237 C298            343     clr ri
+0239 111F            344     acall write
+023B 3098FD          345     jnb ri,$
+023E E599            346     mov a,sbuf
+0240 C298            347     clr ri
+0242 111F            348     acall write
+0244 3098FD          349     jnb ri,$
+0247 E599            350     mov a,sbuf
+0249 C298            351     clr ri
+024B 111F            352     acall write
+024D 3098FD          353     jnb ri,$
+0250 E599            354     mov a,sbuf
+0252 C298            355     clr ri
+0254 111F            356     acall write
+                     357     
+0256 3098FD          358     jnb ri,$
+0259 E599            359     mov a,sbuf
+025B C298            360     clr ri
+025D 111F            361     acall write
+025F 3098FD          362     jnb ri,$
+0262 E599            363     mov a,sbuf
+0264 C298            364     clr ri
+0266 111F            365     acall write
+0268 3098FD          366     jnb ri,$
+026B E599            367     mov a,sbuf
+026D C298            368     clr ri
+026F 111F            369     acall write
+0271 3098FD          370     jnb ri,$
+0274 E599            371     mov a,sbuf
+0276 C298            372     clr ri
+0278 111F            373     acall write
+027A 3098FD          374     jnb ri,$
+027D E599            375     mov a,sbuf
+027F C298            376     clr ri
+0281 111F            377     acall write
+0283 3098FD          378     jnb ri,$
+0286 E599            379     mov a,sbuf
+0288 C298            380     clr ri
+028A 111F            381     acall write
+028C 3098FD          382     jnb ri,$
+028F E599            383     mov a,sbuf
+0291 C298            384     clr ri
+0293 111F            385     acall write
+0295 3098FD          386     jnb ri,$
+0298 E599            387     mov a,sbuf
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     7
+
+029A C298            388     clr ri
+029C 111F            389     acall write
+029E 3098FD          390     jnb ri,$
+02A1 E599            391     mov a,sbuf
+02A3 C298            392     clr ri
+02A5 111F            393     acall write
+02A7 3098FD          394     jnb ri,$
+02AA E599            395     mov a,sbuf
+02AC C298            396     clr ri
+02AE 111F            397     acall write
+02B0 3098FD          398     jnb ri,$
+02B3 E599            399     mov a,sbuf
+02B5 C298            400     clr ri
+02B7 111F            401     acall write
+02B9 3098FD          402     jnb ri,$
+02BC E599            403     mov a,sbuf
+02BE C298            404     clr ri
+02C0 111F            405     acall write
+                     406     
+02C2 74C0            407     mov a,#0c0h
+02C4 110E            408     acall command
+                     409     
+02C6 3098FD          410     jnb ri,$
+02C9 E599            411     mov a,sbuf
+02CB C298            412     clr ri
+02CD 111F            413     acall write
+02CF 3098FD          414     jnb ri,$
+02D2 E599            415     mov a,sbuf
+02D4 C298            416     clr ri
+02D6 111F            417     acall write
+02D8 3098FD          418     jnb ri,$
+02DB E599            419     mov a,sbuf
+02DD C298            420     clr ri
+02DF 111F            421     acall write
+02E1 3098FD          422     jnb ri,$
+02E4 E599            423     mov a,sbuf
+02E6 C298            424     clr ri
+02E8 111F            425     acall write
+02EA 3098FD          426     jnb ri,$
+02ED E599            427     mov a,sbuf
+02EF C298            428     clr ri
+02F1 111F            429     acall write
+02F3 3098FD          430     jnb ri,$
+02F6 E599            431     mov a,sbuf
+02F8 C298            432     clr ri
+02FA 111F            433     acall write
+02FC 3098FD          434     jnb ri,$
+02FF E599            435     mov a,sbuf
+0301 C298            436     clr ri
+0303 111F            437     acall write
+0305 3098FD          438     jnb ri,$
+0308 E599            439     mov a,sbuf
+030A C298            440     clr ri
+030C 111F            441     acall write
+030E 3098FD          442     jnb ri,$
+0311 E599            443     mov a,sbuf
+0313 C298            444     clr ri
+0315 111F            445     acall write
+0317 A175            446     jmp cwe
+                     447     
+                     448     
+                     449     ;this is project 2
+                     450     
+0319                 451     ais3:
+0319 3098FD          452     jnb ri,$
+031C E599            453     mov a,sbuf
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     8
+
+031E C298            454     clr ri
+0320 111F            455     acall write
+0322 3098FD          456     jnb ri,$
+0325 E599            457     mov a,sbuf
+0327 C298            458     clr ri
+0329 111F            459     acall write
+032B 3098FD          460     jnb ri,$
+032E E599            461     mov a,sbuf
+0330 C298            462     clr ri
+0332 111F            463     acall write
+0334 3098FD          464     jnb ri,$
+0337 E599            465     mov a,sbuf
+0339 C298            466     clr ri
+033B 111F            467     acall write
+                     468     
+033D 3098FD          469     jnb ri,$
+0340 E599            470     mov a,sbuf
+0342 C298            471     clr ri
+0344 111F            472     acall write
+0346 3098FD          473     jnb ri,$
+0349 E599            474     mov a,sbuf
+034B C298            475     clr ri
+034D 111F            476     acall write
+034F 3098FD          477     jnb ri,$
+0352 E599            478     mov a,sbuf
+0354 C298            479     clr ri
+0356 111F            480     acall write
+0358 3098FD          481     jnb ri,$
+035B E599            482     mov a,sbuf
+035D C298            483     clr ri
+035F 111F            484     acall write
+0361 3098FD          485     jnb ri,$
+0364 E599            486     mov a,sbuf
+0366 C298            487     clr ri
+0368 111F            488     acall write
+036A 3098FD          489     jnb ri,$
+036D E599            490     mov a,sbuf
+036F C298            491     clr ri
+0371 111F            492     acall write
+0373 3098FD          493     jnb ri,$
+0376 E599            494     mov a,sbuf
+0378 C298            495     clr ri
+037A 111F            496     acall write
+037C 3098FD          497     jnb ri,$
+037F E599            498     mov a,sbuf
+0381 C298            499     clr ri
+0383 111F            500     acall write
+0385 3098FD          501     jnb ri,$
+0388 E599            502     mov a,sbuf
+038A C298            503     clr ri
+038C 111F            504     acall write
+038E 3098FD          505     jnb ri,$
+0391 E599            506     mov a,sbuf
+0393 C298            507     clr ri
+0395 111F            508     acall write
+0397 3098FD          509     jnb ri,$
+039A E599            510     mov a,sbuf
+039C C298            511     clr ri
+039E 111F            512     acall write
+                     513     
+                     514     
+                     515     
+                     516     
+03A0 3098FD          517     jnb ri,$
+03A3 E599            518     mov a,sbuf
+03A5 C298            519     clr ri
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE     9
+
+03A7 111F            520     acall write
+03A9 74C0            521     mov a,#0c0h
+03AB 110E            522     acall command
+                     523     
+03AD 3098FD          524     jnb ri,$
+03B0 E599            525     mov a,sbuf
+03B2 C298            526     clr ri
+03B4 111F            527     acall write
+03B6 3098FD          528     jnb ri,$
+03B9 E599            529     mov a,sbuf
+03BB C298            530     clr ri
+03BD 111F            531     acall write
+03BF 3098FD          532     jnb ri,$
+03C2 E599            533     mov a,sbuf
+03C4 C298            534     clr ri
+03C6 111F            535     acall write
+03C8 3098FD          536     jnb ri,$
+03CB E599            537     mov a,sbuf
+03CD C298            538     clr ri
+03CF 111F            539     acall write
+03D1 3098FD          540     jnb ri,$
+03D4 E599            541     mov a,sbuf
+03D6 C298            542     clr ri
+03D8 111F            543     acall write
+03DA 3098FD          544     jnb ri,$
+03DD E599            545     mov a,sbuf
+03DF C298            546     clr ri
+03E1 111F            547     acall write
+03E3 3098FD          548     jnb ri,$
+03E6 E599            549     mov a,sbuf
+03E8 C298            550     clr ri
+03EA 111F            551     acall write
+03EC 3098FD          552     jnb ri,$
+03EF E599            553     mov a,sbuf
+03F1 C298            554     clr ri
+03F3 111F            555     acall write
+03F5 3098FD          556     jnb ri,$
+03F8 E599            557     mov a,sbuf
+03FA C298            558     clr ri
+03FC 111F            559     acall write
+03FE 3098FD          560     jnb ri,$
+0401 E599            561     mov a,sbuf
+0403 C298            562     clr ri
+0405 111F            563     acall write
+0407 3098FD          564     jnb ri,$
+040A E599            565     mov a,sbuf
+040C C298            566     clr ri
+040E 111F            567     acall write
+0410 3098FD          568     jnb ri,$
+0413 E599            569     mov a,sbuf
+0415 C298            570     clr ri
+0417 111F            571     acall write
+0419 3098FD          572     jnb ri,$
+041C E599            573     mov a,sbuf
+041E C298            574     clr ri
+0420 111F            575     acall write
+0422 3098FD          576     jnb ri,$
+0425 E599            577     mov a,sbuf
+0427 C298            578     clr ri
+0429 111F            579     acall write
+042B 3098FD          580     jnb ri,$
+042E E599            581     mov a,sbuf
+0430 C298            582     clr ri
+0432 111F            583     acall write
+0434 3098FD          584     jnb ri,$
+0437 E599            585     mov a,sbuf
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    10
+
+0439 C298            586     clr ri
+043B 111F            587     acall write
+043D 3098FD          588     jnb ri,$
+0440 E599            589     mov a,sbuf
+0442 C298            590     clr ri
+0444 111F            591     acall write
+0446 3098FD          592     jnb ri,$
+0449 E599            593     mov a,sbuf
+044B C298            594     clr ri
+044D 111F            595     acall write
+                     596     
+                     597     
+044F A175            598     jmp cwe
+                     599     
+                     600     
+                     601     ;dept of.....
+0451                 602     ais4: 
+0451 3098FD          603     jnb ri,$
+0454 E599            604     mov a,sbuf
+0456 C298            605     clr ri
+0458 111F            606     acall write
+045A 3098FD          607     jnb ri,$
+045D E599            608     mov a,sbuf
+045F C298            609     clr ri
+0461 111F            610     acall write
+0463 3098FD          611     jnb ri,$
+0466 E599            612     mov a,sbuf
+0468 C298            613     clr ri
+046A 111F            614     acall write
+046C 3098FD          615     jnb ri,$
+046F E599            616     mov a,sbuf
+0471 C298            617     clr ri
+0473 111F            618     acall write
+                     619     
+0475 3098FD          620     jnb ri,$
+0478 E599            621     mov a,sbuf
+047A C298            622     clr ri
+047C 111F            623     acall write
+047E 3098FD          624     jnb ri,$
+0481 E599            625     mov a,sbuf
+0483 C298            626     clr ri
+0485 111F            627     acall write
+0487 3098FD          628     jnb ri,$
+048A E599            629     mov a,sbuf
+048C C298            630     clr ri
+048E 111F            631     acall write
+0490 3098FD          632     jnb ri,$
+0493 E599            633     mov a,sbuf
+0495 C298            634     clr ri
+0497 111F            635     acall write
+0499 3098FD          636     jnb ri,$
+049C E599            637     mov a,sbuf
+049E C298            638     clr ri
+04A0 111F            639     acall write
+04A2 3098FD          640     jnb ri,$
+04A5 E599            641     mov a,sbuf
+04A7 C298            642     clr ri
+04A9 111F            643     acall write
+04AB 3098FD          644     jnb ri,$
+04AE E599            645     mov a,sbuf
+04B0 C298            646     clr ri
+04B2 111F            647     acall write
+04B4 3098FD          648     jnb ri,$
+04B7 E599            649     mov a,sbuf
+04B9 C298            650     clr ri
+04BB 111F            651     acall write
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    11
+
+04BD 3098FD          652     jnb ri,$
+04C0 E599            653     mov a,sbuf
+04C2 C298            654     clr ri
+04C4 111F            655     acall write
+04C6 3098FD          656     jnb ri,$
+04C9 E599            657     mov a,sbuf
+04CB C298            658     clr ri
+04CD 111F            659     acall write
+04CF 3098FD          660     jnb ri,$
+04D2 E599            661     mov a,sbuf
+04D4 C298            662     clr ri
+04D6 111F            663     acall write
+04D8 3098FD          664     jnb ri,$
+04DB E599            665     mov a,sbuf
+04DD C298            666     clr ri
+04DF 111F            667     acall write
+                     668     
+04E1 74C0            669     mov a,#0c0h
+04E3 110E            670     acall command
+                     671     
+04E5 3098FD          672     jnb ri,$
+04E8 E599            673     mov a,sbuf
+04EA C298            674     clr ri
+04EC 111F            675     acall write
+04EE 3098FD          676     jnb ri,$
+04F1 E599            677     mov a,sbuf
+04F3 C298            678     clr ri
+04F5 111F            679     acall write
+04F7 3098FD          680     jnb ri,$
+04FA E599            681     mov a,sbuf
+04FC C298            682     clr ri
+04FE 111F            683     acall write
+0500 3098FD          684     jnb ri,$
+0503 E599            685     mov a,sbuf
+0505 C298            686     clr ri
+0507 111F            687     acall write
+0509 3098FD          688     jnb ri,$
+050C E599            689     mov a,sbuf
+050E C298            690     clr ri
+0510 111F            691     acall write
+0512 3098FD          692     jnb ri,$
+0515 E599            693     mov a,sbuf
+0517 C298            694     clr ri
+0519 111F            695     acall write
+                     696     
+                     697     
+051B 3098FD          698     jnb ri,$
+051E E599            699     mov a,sbuf
+0520 C298            700     clr ri
+0522 111F            701     acall write
+0524 3098FD          702     jnb ri,$
+0527 E599            703     mov a,sbuf
+0529 C298            704     clr ri
+052B 111F            705     acall write
+052D 3098FD          706     jnb ri,$
+0530 E599            707     mov a,sbuf
+0532 C298            708     clr ri
+0534 111F            709     acall write
+0536 3098FD          710     jnb ri,$
+0539 E599            711     mov a,sbuf
+053B C298            712     clr ri
+053D 111F            713     acall write
+                     714     
+053F 3098FD          715     jnb ri,$
+0542 E599            716     mov a,sbuf
+0544 C298            717     clr ri
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    12
+
+0546 111F            718     acall write
+0548 3098FD          719     jnb ri,$
+054B E599            720     mov a,sbuf
+054D C298            721     clr ri
+054F 111F            722     acall write
+0551 3098FD          723     jnb ri,$
+0554 E599            724     mov a,sbuf
+0556 C298            725     clr ri
+0558 111F            726     acall write
+055A 3098FD          727     jnb ri,$
+055D E599            728     mov a,sbuf
+055F C298            729     clr ri
+0561 111F            730     acall write
+0563 3098FD          731     jnb ri,$
+0566 E599            732     mov a,sbuf
+0568 C298            733     clr ri
+056A 111F            734     acall write
+056C 3098FD          735     jnb ri,$
+056F E599            736     mov a,sbuf
+0571 C298            737     clr ri
+0573 111F            738     acall write
+                     739     
+                     740     
+                     741     
+0575                 742     cwe:
+                     743     
+0575 B179            744     acall DELAYforstring
+0577 800D            745     jmp d111
+                     746     
+0579                 747     DELAYforstring: 
+0579 7D0E            748     mov r5,#14d
+                     749     
+057B                 750     sa1:
+057B 7EFA            751     MOV R6,#250D
+057D 7FFA            752           MOV R7,#250D
+057F DEFE            753     sLOOP1: DJNZ R6,sLOOP1
+0581 DFFC            754     sLOOP2: DJNZ R7,sLOOP1
+0583 DDF6            755     sLOOP3: DJNZ R5,sa1
+0585 22              756     ret
+0586                 757     d111:
+                     758     
+                     759     
+                     760     
+0586 01B2            761     jmp here
+                     762     
+                     763     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+0588                 764     mode2:
+                     765     
+                     766     
+0588                 767     ch:
+0588                 768     mode2_port_ini:
+0588 75A000          769     mov p2,#00h
+058B D290            770     setb p1.0
+058D D291            771     setb p1.1
+058F D292            772     setb p1.2
+0591 1145            773     acall delay_1s
+0593 8017            774     jmp ss
+                     775     
+0595                 776     Lcd:
+0595 7438            777     mov a,#38h
+0597 110E            778     acall command
+0599 7406            779     mov a,#06h
+059B 110E            780     acall command
+059D 740C            781     mov a,#0ch
+059F 110E            782     acall command
+05A1 7401            783     mov a,#01h
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    13
+
+05A3 110E            784     acall command
+05A5 7480            785     mov a,#80h
+05A7 110E            786     acall command
+05A9 1145            787     acall delay_1s
+05AB 22              788     ret
+05AC                 789     ss:
+05AC B195            790     acall lcd
+                     791     
+05AE                 792     mode2Display:
+                     793     
+05AE 7445            794     mov a,#'E'
+05B0 111F            795     acall write
+05B2 746E            796     mov a,#'n'
+05B4 111F            797     acall write
+05B6 7474            798     mov a,#'t'
+05B8 111F            799     acall write
+05BA 7465            800     mov a,#'e'
+05BC 111F            801     acall write
+05BE 7472            802     mov a,#'r'
+05C0 111F            803     acall write
+05C2 7414            804     mov a,#14h
+05C4 110E            805     acall command 
+05C6 7463            806     mov a,#'c'
+05C8 111F            807     acall write
+05CA 746F            808     mov a,#'o'
+05CC 111F            809     acall write
+                     810     
+                     811     
+                     812     
+05CE 7464            813     mov a,#'d'
+05D0 111F            814     acall write
+05D2 7465            815     mov a,#'e'
+05D4 111F            816     acall write
+                     817     
+                     818     
+05D6 8002            819     jmp path
+05D8                 820     ptos:
+05D8 C19C            821     jmp star
+05DA                 822     path:
+05DA 3098FD          823     jnb ri,$
+05DD B195            824     acall lcd
+                     825     
+                     826     
+                     827     
+05DF E599            828     mov a,sbuf
+05E1 C298            829     clr ri
+05E3 B42A02          830     cjne a,#'*',nptos
+05E6 80F0            831     jmp ptos
+05E8                 832     nptos:
+05E8 B42302          833     cjne a,#'#',nhash
+05EB 0154            834     jmp st
+05ED                 835     nhash:
+05ED B43002          836     cjne a,#'0',nzn
+05F0 C1CC            837     jmp zn
+05F2                 838     nzn:
+                     839     
+05F2 F574            840     mov 74h,a
+05F4 C298            841     clr ri
+                     842     
+05F6 3098FD          843     jnb ri,$
+05F9 E599            844     mov a,sbuf
+05FB B42302          845     cjne a,#'#',nhash1
+05FE 0154            846     jmp st
+0600                 847     nhash1:
+0600 F575            848     mov 75h,a
+0602 C298            849     clr ri
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    14
+
+                     850     
+0604 3098FD          851     jnb ri,$
+0607 E599            852     mov a,sbuf
+0609 B42302          853     cjne a,#'#',nhash2
+060C 0154            854     jmp st
+060E                 855     nhash2:
+060E F576            856     mov 76h,a
+0610 C298            857     clr ri
+                     858     
+0612 3098FD          859     jnb ri,$
+0615 E599            860     mov a,sbuf
+0617 B42302          861     cjne a,#'#',nhash3
+061A 0154            862     jmp st
+061C                 863     nhash3:
+061C F577            864     mov 77h,a
+061E C298            865     clr ri
+                     866     
+                     867     
+0620 E574            868     mov a,74h
+0622 B5703B          869     cjne a,70h,ic
+0625 E575            870     mov a,75h
+0627 B57136          871     cjne a,71h,ic
+062A E576            872     mov a,76h
+062C B57231          873     cjne a,72h,ic
+062F E577            874     mov a,77h
+0631 B5732C          875     cjne a,73h,ic
+0634 8002            876     jmp o00
+0636                 877     lpa:
+0636 A195            878     jmp lcd
+                     879     
+0638                 880     o00:
+                     881     
+                     882     
+0638 7444            883     mov a,#'D'
+063A 111F            884     acall write
+063C 746F            885     mov a,#'o'
+063E 111F            886     acall write
+0640 746F            887     mov a,#'o'
+0642 111F            888     acall write
+0644 7472            889     mov a,#'r'
+0646 111F            890     acall write
+0648 7420            891     mov a,#' '
+064A 111F            892     acall write
+064C 746F            893     mov a,#'o'
+064E 111F            894     acall write
+0650 7470            895     mov a,#'p'
+0652 111F            896     acall write
+0654 7465            897     mov a,#'e'
+0656 111F            898     acall write
+0658 746E            899     mov a,#'n'
+065A 111F            900     acall write
+065C B179            901      acall DELAYforstring
+065E A188            902      jmp ch
+0660                 903     ic:
+0660 7449            904     mov a,#'I'
+0662 111F            905     acall write
+0664 746E            906     mov a,#'n'
+0666 111F            907     acall write
+0668 7463            908     mov a,#'c'
+066A 111F            909     acall write
+066C 746F            910     mov a,#'o'
+066E 111F            911     acall write
+0670 7472            912     mov a,#'r'
+0672 111F            913     acall write
+0674 7472            914     mov a,#'r'
+0676 111F            915     acall write
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    15
+
+0678 7465            916     mov a,#'e'
+067A 111F            917     acall write
+067C 7463            918     mov a,#'c'
+067E 111F            919     acall write
+0680 7474            920     mov a,#'t'
+0682 111F            921     acall write
+0684 7420            922     mov a,#' '
+0686 111F            923     acall write
+0688 7463            924     mov a,#'c'
+068A 111F            925     acall write
+068C 746F            926     mov a,#'o'
+068E 111F            927     acall write
+0690 7464            928     mov a,#'d'
+0692 111F            929     acall write
+0694 7465            930     mov a,#'e'
+0696 111F            931     acall write
+0698 B179            932     acall DELAYforstring
+069A A188            933     jmp ch
+                     934     
+069C                 935     star:
+069C 7464            936     mov a,#'d'
+069E 111F            937     acall write
+06A0 746F            938     mov a,#'o'
+06A2 111F            939     acall write
+06A4 746F            940     mov a,#'o'
+06A6 111F            941     acall write
+06A8 7472            942     mov a,#'r'
+06AA 111F            943     acall write
+06AC 7420            944     mov a,#' '
+06AE 111F            945     acall write
+06B0 7463            946     mov a,#'c'
+06B2 111F            947     acall write
+06B4 746C            948     mov a,#'l'
+06B6 111F            949     acall write
+06B8 746F            950     mov a,#'o'
+06BA 111F            951     acall write
+06BC 7473            952     mov a,#'s'
+06BE 111F            953     acall write
+06C0 7465            954     mov a,#'e'
+06C2 111F            955     acall write
+06C4 7464            956     mov a,#'d'
+06C6 111F            957     acall write
+                     958     
+06C8 B179            959     acall DELAYforstring
+06CA A188            960     jmp ch
+                     961     
+                     962     
+                     963     
+06CC                 964     zn:
+06CC 7465            965     mov a,#'e'
+06CE 111F            966     acall write
+06D0 746E            967     mov a,#'n'
+06D2 111F            968     acall write
+06D4 7474            969     mov a,#'t'
+06D6 111F            970     acall write
+06D8 7465            971     mov a,#'e'
+06DA 111F            972     acall write
+06DC 7472            973     mov a,#'r'
+06DE 111F            974     acall write
+06E0 7420            975     mov a,#' '
+06E2 111F            976     acall write
+                     977     
+06E4 7463            978     mov a,#'c'
+06E6 111F            979     acall write
+06E8 7475            980     mov a,#'u'
+06EA 111F            981     acall write
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    16
+
+06EC 7472            982     mov a,#'r'
+06EE 111F            983     acall write
+06F0 7472            984     mov a,#'r'
+06F2 111F            985     acall write
+06F4 7465            986     mov a,#'e'
+06F6 111F            987     acall write
+06F8 746E            988     mov a,#'n'
+06FA 111F            989     acall write
+06FC 7474            990     mov a,#'t'
+06FE 111F            991     acall write
+0700 74C0            992     mov a,#0c0h
+0702 110E            993     acall command
+0704 7420            994     mov a,#' '
+0706 111F            995     acall write
+0708 7463            996     mov a,#'c'
+070A 111F            997     acall write
+070C 746F            998     mov a,#'o'
+070E 111F            999     acall write
+0710 7464           1000     mov a,#'d'
+0712 111F           1001     acall write
+0714 7465           1002     mov a,#'e'
+0716 111F           1003     acall write
+                    1004     
+0718 3098FD         1005     jnb ri,$
+                    1006             
+071B E599           1007     mov a,sbuf
+071D B42302         1008     cjne a,#'#',nhash4
+0720 0154           1009     jmp st
+0722                1010     nhash4:
+0722 F574           1011     mov 74h,a
+0724 C298           1012     clr ri
+                    1013     
+0726 3098FD         1014     jnb ri,$
+                    1015     
+0729 E599           1016     mov a,sbuf
+                    1017     ;cjne a,#'#',nhash5
+                    1018     ;jmp st
+                    1019     ;nhash5:
+072B F575           1020     mov 75h,a
+072D C298           1021     clr ri
+                    1022     
+072F 3098FD         1023     jnb ri,$
+                    1024     
+0732 E599           1025     mov a,sbuf
+                    1026     ;cjne a,#'#',nhash6
+                    1027     ;jmp st
+                    1028     ;nhash6:
+0734 F576           1029     mov 76h,a
+0736 C298           1030     clr ri
+                    1031     
+0738 3098FD         1032     jnb ri,$
+                    1033             
+073B E599           1034     mov a,sbuf
+                    1035     ;cjne a,#'#',nhash7
+                    1036     ;jmp st
+                    1037     ;nhash7:
+073D F577           1038     mov 77h,a
+073F C298           1039     clr ri
+                    1040     
+0741 E574           1041     mov a,74h
+0743 B57011         1042     cjne a,70h,aga0
+0746 E575           1043     mov a,75h
+0748 B5710C         1044     cjne a,71h,aga0
+074B E576           1045     mov a,76h
+074D B57207         1046     cjne a,72h,aga0
+0750 E577           1047     mov a,77h
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    17
+
+0752 B57302         1048     cjne a,73h,aga0
+0755 8002           1049     jmp aaaa
+0757                1050     aga0:
+0757 8074           1051     jmp aga
+0759                1052     aaaa:
+0759 B195           1053     acall lcd
+075B 7445           1054     mov a,#'E'
+075D 111F           1055     acall write
+075F 746E           1056     mov a,#'n'
+0761 111F           1057     acall write
+0763 7474           1058     mov a,#'t'
+0765 111F           1059     acall write
+0767 7465           1060     mov a,#'e'
+0769 111F           1061     acall write
+076B 7472           1062     mov a,#'r'
+076D 111F           1063     acall write
+076F 7420           1064     mov a,#' '
+0771 111F           1065     acall write
+0773 746E           1066     mov a,#'n'
+0775 111F           1067     acall write
+0777 7465           1068     mov a,#'e'
+0779 111F           1069     acall write
+077B 7477           1070     mov a,#'w'
+077D 111F           1071     acall write
+077F 7420           1072     mov a,#' '
+0781 111F           1073     acall write
+0783 7463           1074     mov a,#'c'
+0785 111F           1075     acall write
+0787 746F           1076     mov a,#'o'
+0789 111F           1077     acall write
+078B 7464           1078     mov a,#'d'
+078D 111F           1079     acall write
+078F 7465           1080     mov a,#'e'
+0791 111F           1081     acall write
+                    1082     
+0793 3098FD         1083     jnb ri,$
+                    1084             
+0796 E599           1085     mov a,sbuf
+0798 B42302         1086     cjne a,#'#',nhash8
+079B 0154           1087     jmp st
+079D                1088     nhash8:
+079D F570           1089     mov 70h,a
+079F C298           1090     clr ri
+                    1091     
+07A1 3098FD         1092     jnb ri,$
+                    1093             
+07A4 E599           1094     mov a,sbuf
+07A6 B42302         1095     cjne a,#'#',nhash9
+07A9 0154           1096     jmp st
+07AB                1097     nhash9:
+07AB F571           1098     mov 71h,a
+07AD C298           1099     clr ri
+                    1100     
+07AF 3098FD         1101     jnb ri,$
+                    1102     
+07B2 E599           1103     mov a,sbuf
+07B4 B42302         1104     cjne a,#'#',nhash10
+07B7 0154           1105     jmp st
+07B9                1106     nhash10:
+07B9 F572           1107     mov 72h,a
+07BB C298           1108     clr ri
+                    1109     
+07BD 3098FD         1110     jnb ri,$
+                    1111     
+07C0 E599           1112     mov a,sbuf
+07C2 B42302         1113             cjne a,#'#',nhash11
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    18
+
+07C5 0154           1114     jmp st
+07C7                1115     nhash11:
+07C7 F573           1116     mov 73h,a
+07C9 C298           1117     clr ri
+07CB A188           1118     jmp ch
+                    1119     ;jmp en
+07CD                1120     aga:
+                    1121     
+                    1122     
+                    1123     
+07CD A188           1124     jmp mode2
+                    1125             
+                    1126     
+                    1127     
+                    1128     ;en:
+                    1129     
+                    1130     
+                    1131     ;jmp $
+                    1132     
+                    1133     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                    1134     
+                    1135     
+                    1136     
+                    1137     end
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    19
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+A1 . . . . . . . .  C ADDR   0166H   A   
+AAAA . . . . . . .  C ADDR   0759H   A   
+AGA. . . . . . . .  C ADDR   07CDH   A   
+AGA0 . . . . . . .  C ADDR   0757H   A   
+AIS1 . . . . . . .  C ADDR   018AH   A   
+AIS2 . . . . . . .  C ADDR   0232H   A   
+AIS3 . . . . . . .  C ADDR   0319H   A   
+AIS4 . . . . . . .  C ADDR   0451H   A   
+C1 . . . . . . . .  C ADDR   0179H   A   
+C2 . . . . . . . .  C ADDR   017EH   A   
+C3 . . . . . . . .  C ADDR   0183H   A   
+C4 . . . . . . . .  C ADDR   0188H   A   
+CH . . . . . . . .  C ADDR   0588H   A   
+COMMAND. . . . . .  C ADDR   000EH   A   
+CON. . . . . . . .  C ADDR   0162H   A   
+CWE. . . . . . . .  C ADDR   0575H   A   
+D111 . . . . . . .  C ADDR   0586H   A   
+D1S. . . . . . . .  C ADDR   0049H   A   
+DE1S . . . . . . .  C ADDR   004BH   A   
+DELAY. . . . . . .  C ADDR   0040H   A   
+DELAYFORNUMDISPLAY  C ADDR   0164H   A   
+DELAYFORSTRING . .  C ADDR   0579H   A   
+DELAY_1S . . . . .  C ADDR   0045H   A   
+DF1S . . . . . . .  C ADDR   0047H   A   
+DISPLAY. . . . . .  C ADDR   0061H   A   
+HERE . . . . . . .  C ADDR   00B2H   A   
+IC . . . . . . . .  C ADDR   0660H   A   
+INTOFH . . . . . .  C ADDR   0172H   A   
+LCD. . . . . . . .  C ADDR   0595H   A   
+LCD_INI. . . . . .  C ADDR   005FH   A   
+LOOP1. . . . . . .  C ADDR   016AH   A   
+LOOP2. . . . . . .  C ADDR   016CH   A   
+LOOP3. . . . . . .  C ADDR   016EH   A   
+LPA. . . . . . . .  C ADDR   0636H   A   
+MODE2. . . . . . .  C ADDR   0588H   A   
+MODE2DISPLAY . . .  C ADDR   05AEH   A   
+MODE2_PORT_INI . .  C ADDR   0588H   A   
+NHASH. . . . . . .  C ADDR   05EDH   A   
+NHASH1 . . . . . .  C ADDR   0600H   A   
+NHASH10. . . . . .  C ADDR   07B9H   A   
+NHASH11. . . . . .  C ADDR   07C7H   A   
+NHASH2 . . . . . .  C ADDR   060EH   A   
+NHASH3 . . . . . .  C ADDR   061CH   A   
+NHASH4 . . . . . .  C ADDR   0722H   A   
+NHASH8 . . . . . .  C ADDR   079DH   A   
+NHASH9 . . . . . .  C ADDR   07ABH   A   
+NPTOS. . . . . . .  C ADDR   05E8H   A   
+NZN. . . . . . . .  C ADDR   05F2H   A   
+O00. . . . . . . .  C ADDR   0638H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PATH . . . . . . .  C ADDR   05DAH   A   
+PORT_INI . . . . .  C ADDR   0054H   A   
+PT2. . . . . . . .  C ADDR   0052H   A   
+PTOS . . . . . . .  C ADDR   05D8H   A   
+READY. . . . . . .  C ADDR   0030H   A   
+REP. . . . . . . .  C ADDR   0042H   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+SA1. . . . . . . .  C ADDR   057BH   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+A51 MACRO ASSEMBLER  U2                                                                   07/15/2021 21:43:13 PAGE    20
+
+SCON . . . . . . .  D ADDR   0098H   A   
+SLOOP1 . . . . . .  C ADDR   057FH   A   
+SLOOP2 . . . . . .  C ADDR   0581H   A   
+SLOOP3 . . . . . .  C ADDR   0583H   A   
+SS . . . . . . . .  C ADDR   05ACH   A   
+ST . . . . . . . .  C ADDR   0054H   A   
+STAR . . . . . . .  C ADDR   069CH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+WAIT . . . . . . .  C ADDR   0036H   A   
+WRITE. . . . . . .  C ADDR   001FH   A   
+ZN . . . . . . . .  C ADDR   06CCH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

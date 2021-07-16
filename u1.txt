@@ -1,0 +1,315 @@
+ORG 00H
+jmp start
+delayinkeypad:
+mov r3,#08h
+df1s:
+mov r2,#0ffh
+d1s:
+mov r1,#0ffh
+de1s:
+djnz r1,de1s
+djnz r2,d1s
+djnz r3,df1s
+ret
+
+start:
+	
+;mode selection through keypad
+MOV A,#11111111B // loads A with all 1's
+MOV P0,#00000000B // initializes P0 as output port
+
+BACK:MOV P1,#11111111B // loads P1 with all 1's
+     CLR P1.0  // makes row 1 low
+     JB P1.4,NEXT1  // checks whether column 1 is low and jumps to NEXT1 if not low
+     MOV A,#1d   // loads a with 0D if column is low (that means key 1 is pressed)
+     jmp rrr  // calls DISPLAY subroutine
+	 NEXT1:
+jb p1.5,back	 // checks whether column 2 is low and so on...
+      MOV A,#2d
+      jmp rrr
+
+rrr:
+
+acall delayinkeypad
+
+
+
+
+//cjne a,#2d,n
+mov tmod,#20h
+mov th1,#-6
+mov scon,#50h
+
+setb tr1
+mov a,#'e'
+acall transfer
+mov a,#'n'
+
+acall transfer
+mov a,#'t'
+acall transfer
+mov a,#'e'
+acall transfer
+mov a,#'r'
+acall transfer
+mov a,#' '
+acall transfer
+
+mov a,#'n'
+acall transfer
+mov a,#'u'
+acall transfer
+mov a,#'m'
+acall transfer
+mov a,#'b'
+acall transfer
+mov a,#'e'
+acall transfer
+mov a,#'r'
+acall transfer
+jmp trrr
+transfer:
+mov sbuf,a
+jnb ti,$
+	clr ti
+	ret
+	trrr:
+	;numberselection
+	numberselection:MOV P1,#11111111B // loads P1 with all 1's
+     CLR P1.0  // makes row 1 low
+     JB P1.4,ns1  // checks whether column 1 is low and jumps to NEXT1 if not low
+     MOV A,#'1'   // loads a with 0D if column is low (that means key 1 is pressed)
+      jmp nf // calls DISPLAY subroutine
+	 ns1:
+jb p1.5,ns2	 // checks whether column 2 is low and so on...
+      MOV A,#'2'
+	  jmp nf
+	   ns2:
+	   jb p1.6,ns3	 // checks whether column 2 is low and so on...
+      MOV A,#'3'
+	  jmp nf
+	   ns3:
+	   
+	  setb p1.0
+	  clr p1.1
+	  jb p1.4,ns4
+	  mov a,#'4'
+	  jmp nf
+	  
+	  ns4:
+	  jmp numberselection
+	  nf:
+	  mov sbuf,a
+	  jnb ti,$
+	clr ti
+	acall delayinkeypad
+	
+	
+	//my name
+	
+	
+	mov a,#'H'
+acall transfer
+acall delayfnd
+acall delayfnd
+acall delayfnd
+jmp ag
+DELAYfnd: 
+mov r5,#8d
+
+a1:
+MOV R6,#250D
+       MOV R7,#250D
+LOOP1: DJNZ R6,LOOP1
+LOOP2: DJNZ R7,LOOP1
+LOOP3: DJNZ R5,a1
+ret
+ag:
+mov a,#'e'
+
+acall transfer
+
+
+mov a,#'l'
+acall transfer
+mov a,#'l'
+acall transfer
+mov a,#'o'
+acall transfer
+mov a,#','
+acall transfer
+
+mov a,#'M'
+acall transfer
+mov a,#'y'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'n'
+acall transfer
+mov a,#'a'
+acall transfer
+mov a,#'m'
+acall transfer
+mov a,#'e'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'i'
+acall transfer
+mov a,#'s'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'H'
+acall transfer
+mov a,#'a'
+acall transfer
+mov a,#'m'
+acall transfer
+mov a,#'z'
+acall transfer
+mov a,#'a'
+acall transfer
+
+
+
+
+
+;i am doing serial project
+
+mov a,#'I'
+acall transfer
+acall delayfnd
+acall delayfnd
+acall delayfnd
+
+
+mov a,#' '
+
+acall transfer
+
+
+mov a,#'a'
+acall transfer
+mov a,#'m'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'d'
+acall transfer
+
+mov a,#'o'
+acall transfer
+mov a,#'i'
+acall transfer
+mov a,#'n'
+acall transfer
+mov a,#'g'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'s'
+acall transfer
+mov a,#'e'
+acall transfer
+mov a,#'r'
+acall transfer
+mov a,#'i'
+acall transfer
+mov a,#'a'
+acall transfer
+mov a,#'l'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'p'
+acall transfer
+mov a,#'r'
+acall transfer
+mov a,#'o'
+acall transfer
+mov a,#'j'
+acall transfer
+mov a,#'e'
+acall transfer
+mov a,#'c'
+acall transfer	
+mov a,#'t'
+acall transfer	
+
+
+
+;this is project 2 of mi....
+
+
+
+mov a,#'T'
+acall transfer
+acall delayfnd
+acall delayfnd
+acall delayfnd
+
+
+mov a,#'h'
+
+acall transfer
+
+
+mov a,#'i'
+acall transfer
+mov a,#'s'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'i'
+acall transfer
+
+mov a,#'s'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'p'
+acall transfer
+mov a,#'r'
+acall transfer
+mov a,#'o'
+acall transfer
+mov a,#'j'
+acall transfer
+mov a,#'e'
+acall transfer
+mov a,#'c'
+acall transfer
+mov a,#'t'
+acall transfer
+mov a,#'a'
+acall transfer
+mov a,#'l'
+acall transfer
+mov a,#' '
+acall transfer
+mov a,#'p'
+acall transfer
+mov a,#'r'
+acall transfer
+mov a,#'o'
+acall transfer
+mov a,#'j'
+acall transfer
+mov a,#'e'
+acall transfer
+mov a,#'c'
+acall transfer	
+mov a,#'t'
+acall transfer
+
+
+
+	
+	jmp $   
+	
+	n:
+
+
+END
